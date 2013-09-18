@@ -74,12 +74,16 @@ nodesToList <- function(nodes){
 #' @importFrom plyr rbind.fill.matrix
 #' @export
 #' @examples
-#' l <- nodesToList(t)
-#' #finds the number of levels in the list -- which should correspond to the number of xmlChildren
-#' depth <- function(this) ifelse(is.list(this), 1L + max(sapply(this, depth)), 0L)
-#' depth(l)
-#' l2 <- nodesToList(t2)
-#' depth(l2)
+#' m <- listsToMatrix(l)
+#' names(m)
+#' m[[1]]
+#' m[[2]]
+#' df <- lapply(m, function(x) data.frame(x, stringsAsFactors=FALSE))
+#' 
+#' m2 <- listsToMatrix(l2)
+#' names(m2)
+#' m2[[1]]
+#' 
 #' 
 
 listsToMatrix <- function(l) {
@@ -93,14 +97,11 @@ listsToMatrix <- function(l) {
   }
   #flatten the nested list hierarchy
   ml <- squash(l)
-  
   #http://stackoverflow.com/questions/18862601/extract-name-hierarchy-for-each-leaf-of-a-nested-list
   nms <- names(rapply(l, function(x) if (is.list(x)) name(x) else ""))
   stopifnot(length(ml) == length(nms))
   tapply(ml, INDEX=nms, rbind.fill.matrix)
 }
-
-
 
 #nl <- rapply(l, function(x) gsub("\\.", "_", x), how="replace")
 ##worth it??
@@ -111,57 +112,6 @@ listsToMatrix <- function(l) {
 # length(unique(ul2))
 
 
-
-
-
-
-#' nodesToData
-#' 
-#' @export
-#' @examples
-#' #nodes have three classes?
-#' class(nodes[[1]][[1]])
-#' attrs <- nodesToData(nodes)
-
-nodesToData <- function(nodes, extract.attributes=TRUE, extract.values=FALSE) { 
-  rapply(nodes, function(x) {
-                  if (extract.attributes) {
-                      y <- xmlAttrs(x)
-                      class(y) <- "attribute"
-                  }
-                  if (extract.values) {
-                    z <- xmlValues(x)
-                    class(z) <- "value"
-                  }
-                  return(y)
-                }, class="XMLInternalElementNode", how="replace")
-  }
-
-#xmlAttrs(nodes[[1]][[1]])
-#xmlValue(nodes[[1]][[1]])
-
-#   rapply(nodes, function(x) {
-#       y <- xmlValue(x)
-#       class(y) <- "value"
-#       return(y)
-#     }, class="XMLInternalElementNode", how="replace")
-
-
-#' attrsToDataFrame
-#' 
-#' @export
-#' @examples
-#' df <- attrsToDataFrame(attrs)
-
-attrsToDataFrame <- function(attrs, fields) { 
-  #might there be a more general way to include both attributes and values here?
-  if (is.missing(fields)) {
-    fields <- unique(names(unlist(attrs)))
-  }
-  complete <- rapply(attrs, function(x) adjust(x, tags=fields), class="attribute", how="replace")
-  flat.list <- unlist(complete, recursive=FALSE)
-  ldply(flat.list)
-}
 
 # "Adjust" attributes to match the entire set
 # 

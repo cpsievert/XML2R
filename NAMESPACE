@@ -1,7 +1,5 @@
-export(attrsToDataFrame)
 export(docsToNodes)
 export(listsToMatrix)
-export(nodesToData)
 export(nodesToList)
 export(urlsToDataFrame)
 export(urlsToDocs)

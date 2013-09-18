@@ -16,11 +16,14 @@
   XML node.
 }
 \examples{
-l <- nodesToList(t)
-#finds the number of levels in the list -- which should correspond to the number of xmlChildren
-depth <- function(this) ifelse(is.list(this), 1L + max(sapply(this, depth)), 0L)
-depth(l)
-l2 <- nodesToList(t2)
-depth(l2)
+m <- listsToMatrix(l)
+names(m)
+m[[1]]
+m[[2]]
+df <- lapply(m, function(x) data.frame(x, stringsAsFactors=FALSE))
+
+m2 <- listsToMatrix(l2)
+names(m2)
+m2[[1]]
 }
 
