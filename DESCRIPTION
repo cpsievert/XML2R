@@ -1,0 +1,18 @@
+Package: XML2R
+Title: Convenient functions for coercing XML into data frame(s)
+Version: 0.1
+Author: Carson Sievert <sievert@iastate.edu>
+Maintainer: Carson Sievert <sievert@iastate.edu>
+Description: XML2R is a collection of convenient functions for coercing XML
+    into data frame(s).
+License: MIT
+Depends:
+    R (>= 2.15.1),
+    XML
+Imports:
+    plyr
+Date: 2013-08-24
+Collate:
+    'utils.R'
+    'urlsToDataFrame.R'
+BugReports: http://github.com/cpsievert/XML2R/issues
