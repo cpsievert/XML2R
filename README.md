@@ -7,5 +7,4 @@ To install the developmental version on github use: `library(devtools); install_
 
 TO DO:
 
-(1) Put urls to relevant locations (append a column on each table?)
-(2) Syntax for binding tables without "partially common" ancestors
+(1) Syntax for binding tables with "partially common" ancestors
