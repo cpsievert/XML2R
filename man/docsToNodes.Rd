@@ -5,7 +5,7 @@
   docsToNodes(docs, node)
 }
 \description{
-  Essentially a recursive call to getNodeSet.
+  Essentially a recursive call to \link{getNodeSet}.
 }
 \examples{
 nodes <- docsToNodes(docs, node="atbat")

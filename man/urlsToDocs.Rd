@@ -5,7 +5,7 @@
   urlsToDocs(urls)
 }
 \description{
-  Essentially a recursive call to xmlParse.
+  Essentially a recursive call to \link{xmlParse}.
 }
 \examples{
 urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",

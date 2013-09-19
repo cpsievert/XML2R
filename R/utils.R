@@ -1,6 +1,6 @@
 #' Parse XML Files into XML Documents
 #' 
-#' Essentially a recursive call to xmlParse.
+#' Essentially a recursive call to \link{xmlParse}.
 #' 
 #' @importFrom plyr try_default
 #' @export
@@ -32,7 +32,7 @@ urlsToDocs <- function(urls){
 
 #' Parse XML Documents into XML Nodes
 #' 
-#' Essentially a recursive call to getNodeSet.
+#' Essentially a recursive call to \link{getNodeSet}.
 #' 
 #' @export
 #' @examples
@@ -48,7 +48,7 @@ docsToNodes <- function(docs, node) {
 
 #' Coerce XML Nodes into a list with both attributes and values
 #' 
-#' Essentially a recursive call to xmlToList.
+#' Essentially a recursive call to \link{xmlToList}.
 #' 
 #' @export
 #' @examples
@@ -87,20 +87,28 @@ nodesToList <- function(nodes){
 #' 
 
 listsToMatrix <- function(l) {
-  #adapted from http://stackoverflow.com/questions/8139677/how-to-flatten-a-list-to-a-list-without-coercion?
-  squash <- function(x) {
-    len <- sum(rapply(x, function(x) 1L))
-    y <- vector('list', len)
-    i <- 0L
-    rapply(x, function(x) { i <<- i+1L; y[[i]] <<- matrix(x, nrow=1); colnames(y[[i]]) <<- names(x) })
-    y
-  }
-  #flatten the nested list hierarchy
-  ml <- squash(l)
-  #http://stackoverflow.com/questions/18862601/extract-name-hierarchy-for-each-leaf-of-a-nested-list
-  nms <- names(rapply(l, function(x) if (is.list(x)) name(x) else ""))
-  stopifnot(length(ml) == length(nms))
-  tapply(ml, INDEX=nms, rbind.fill.matrix)
+  #adapted from knowledege gained from here:
+  #http://stackoverflow.com/questions/8139677/how-to-flatten-a-list-to-a-list-without-coercion?
+  ##http://stackoverflow.com/questions/18862601/extract-name-hierarchy-for-each-leaf-of-a-nested-list
+  nest <- rapply(l, function(x) 1L)
+  #num <- rapply(l, function(x) if (name(x) == "pitch") 1L)
+  len <- sum(nest)
+  nms <- names(nest)
+  temp <- gsub('.attrs', 'attrs', nms)
+  idx <- gsub('\\.', '//', temp)
+  #select the url prefix and replace with nothing
+  node.sets <- sub("url([0-9]+)//", "", idx)
+  urls <- sub("//.*$", "", idx)
+  #placeholder for the flattened list hierarchy
+  sl <- vector('list', len)
+  i <- 0L
+  #fill up placeholder with relevant info
+  rapply(l, function(x) { i <<- i+1L 
+                          sl[[i]] <<- cbind(matrix(x, nrow=1), urls[[i]])
+                          colnames(sl[[i]]) <<- c(names(x), "source_url") 
+                        })
+  stopifnot(length(sl) == length(idx))
+  tapply(sl, INDEX=node.sets, rbind.fill.matrix)
 }
 
 #nl <- rapply(l, function(x) gsub("\\.", "_", x), how="replace")

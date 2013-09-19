@@ -2,19 +2,39 @@
 #' 
 #' 
 #' 
-#' @param urls set of urls for parsing
+#' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
 #' @param xpath XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
 #' @param df logical. Should matrices be coerced into data frames?
+#' @param bind.urls logical. Row bind nodes (with common ancestors) from different files?
+#' @param collapse character vector with node(s) that should be merged together regardless of their ancestory 
 #' @return Returns list with one element for each relevant XML node. Each element contains a matrix by default.
+#' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToMatrix}
 #' @export
 #' @examples
-#' urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-#'            "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
-#' dat <- urlsToDataFrame(urls) #collects everything
-#' dat2 <- urlsToDataFrame(urls, xpath="//atbat") #collects everything at the atbat level and lower (ie, pitch, runner, etc)
+#' urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/
+#'            gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
+#'            "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/
+#'            gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
+#' #collects everything
+#' dat <- urlsToDataFrame(urls)
+#' dat.long <- urlsToDataFrame(urls, bind.urls=FALSE)  
+#' names(dat)
+#' dat[[1]] #game level
+#' dat[[2]] #inning level
+#' head(dat[[3]]) #action level
+#' head(dat[[4]]) #atbat level
+#' #collects everything at the atbat level and lower (ie, pitch, runner, etc)
+#' dat.atbat <- urlsToDataFrame(urls, xpath="//atbat") 
+#' head(dat.atbat[[1]])
+#' 
+#' 
+#' 
+#' urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
+#'            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
+#' dat3 <- urlsToDataFrame(urls)
 #' 
 
-urlsToDataFrame <- function(urls, xpath, df=FALSE) {
+urlsToDataFrame <- function(urls, xpath, df=FALSE, collapse="url([0-9]+)\\$") {
   if (missing(xpath)) xpath <- "/"
   docs <- urlsToDocs(urls)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
@@ -22,8 +42,39 @@ urlsToDataFrame <- function(urls, xpath, df=FALSE) {
   rm(docs)
   l <- nodesToList(nodes)
   rm(nodes)
+  #since listsToMatrix "collapses" unnamed lists, we now add url identifiers to the first level of elements
+  url.count <- paste0("url", seq_len(length(valid.urls)))
+  names(valid.urls) <- url.count
+  names(l) <- url.count
   m <- listsToMatrix(l)
   rm(l)
   if (df) m <- lapply(m, function(x) data.frame(x, stringsAsFactors=FALSE))
+#   nms <- names(m)
+#   idx <- gsub(collapse, "", nms)
+#   m <- tapply(m, INDEX=idx, rbind.fill.matrix)
+  
+  m[["url_map"]] <- valid.urls
   return(m)
+}
+
+#' Collapse a list of matrices (or data frames) into a smaller list of larger matrices or data frames
+#' 
+#' @param m list of matrices or data frames
+#' @param condition A partial match of names(m). 
+#' @return Returns list with one element for each relevant XML node. Each element contains a matrix by default.
+#' @importFrom plyr rbind.fill.matrix
+#' @export
+
+collapse <- function(m, condition="url") {
+  #collapse list of matrices according to some type of syntax
+  nms <- names(m)
+  nmz <- nms[grep(condition, nms)]
+  browser()
+  nm.split <- strsplit(nmz, split="\\$")
+  idx <- sapply(nm.split, function(x) x[grep(condition, x)])
+  return(tapply(m, INDEX=idx, rbind.fill.matrix))
+  #cond <- paste0(".*\\$$", condition)
+  #gsub(".*\\$$")
+  #i <- 0L
+  #lapply(m, function(x) { i <<- i+1L; x$source <- names(m)[[i]] })
 }

@@ -5,7 +5,7 @@
   nodesToList(nodes)
 }
 \description{
-  Essentially a recursive call to xmlToList.
+  Essentially a recursive call to \link{xmlToList}.
 }
 \examples{
 l <- nodesToList(t)
