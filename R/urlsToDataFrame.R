@@ -16,25 +16,25 @@
 #'            "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/
 #'            gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
 #' #collects everything
-#' dat <- urlsToDataFrame(urls)
-#' dat.long <- urlsToDataFrame(urls, bind.urls=FALSE)  
+#' dat <- XML2R(urls)
+#' dat.long <- XML2R(urls, bind.urls=FALSE)  
 #' names(dat)
 #' dat[[1]] #game level
 #' dat[[2]] #inning level
 #' head(dat[[3]]) #action level
 #' head(dat[[4]]) #atbat level
 #' #collects everything at the atbat level and lower (ie, pitch, runner, etc)
-#' dat.atbat <- urlsToDataFrame(urls, xpath="//atbat") 
+#' dat.atbat <- XML2R(urls, xpath="//atbat") 
 #' head(dat.atbat[[1]])
 #' 
 #' 
 #' 
 #' urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
 #'            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
-#' dat3 <- urlsToDataFrame(urls)
+#' dat3 <- XML2R(urls)
 #' 
 
-urlsToDataFrame <- function(urls, xpath, df=FALSE, collapse="url([0-9]+)\\$") {
+XML2R <- function(urls, xpath, df=FALSE, collapse="url([0-9]+)\\$") {
   if (missing(xpath)) xpath <- "/"
   docs <- urlsToDocs(urls)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
