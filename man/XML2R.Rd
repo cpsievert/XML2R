@@ -2,8 +2,7 @@
 \alias{XML2R}
 \title{Parse XML files into (a list of) matrices or data frame(s)}
 \usage{
-  XML2R(urls, xpath, df = FALSE,
-    collapse = "url([0-9]+)\\$")
+  XML2R(urls, xpath, df = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -17,29 +16,23 @@
 
   \item{df}{logical. Should matrices be coerced into data
   frames?}
-
-  \item{bind.urls}{logical. Row bind nodes (with common
-  ancestors) from different files?}
-
-  \item{collapse}{character vector with node(s) that should
-  be merged together regardless of their ancestory}
 }
 \value{
   Returns list with one element for each relevant XML node.
   Each element contains a matrix by default.
 }
 \description{
-  Parse XML files into (a list of) matrices or data
-  frame(s)
+  The main function of the XML2R package. Documentation to
+  come...
 }
 \examples{
-urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/
-           gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-           "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/
-           gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
+\dontrun{
+pre <- "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/"
+post <- c("gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
+           "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
+urls <- paste0(pre, post)
 #collects everything
 dat <- XML2R(urls)
-dat.long <- XML2R(urls, bind.urls=FALSE)
 names(dat)
 dat[[1]] #game level
 dat[[2]] #inning level
@@ -49,11 +42,10 @@ head(dat[[4]]) #atbat level
 dat.atbat <- XML2R(urls, xpath="//atbat")
 head(dat.atbat[[1]])
 
-
-
 urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
 dat3 <- XML2R(urls)
+}
 }
 \seealso{
   \link{urlsToDocs}, \link{docsToNodes},

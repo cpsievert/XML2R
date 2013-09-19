@@ -2,15 +2,14 @@
 \alias{docsToNodes}
 \title{Parse XML Documents into XML Nodes}
 \usage{
-  docsToNodes(docs, node)
+  docsToNodes(docs, xpath)
+}
+\arguments{
+  \item{docs}{XML documents}
+
+  \item{xpath}{xpath expression}
 }
 \description{
   Essentially a recursive call to \link{getNodeSet}.
-}
-\examples{
-nodes <- docsToNodes(docs, node="atbat")
-t <- docsToNodes(docs, node="/") #select the root
-
-t2 <- docsToNodes(docs2, node="/highlights/*")
 }
 

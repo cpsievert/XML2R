@@ -2,20 +2,10 @@
 #' 
 #' Essentially a recursive call to \link{xmlParse}.
 #' 
+#' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
 #' @importFrom plyr try_default
+#' @importFrom XML xmlParse
 #' @export
-#' @examples
-#' urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-#'            "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
-#' urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
-#'            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
-#' docs <- urlsToDocs(urls)
-#' docs2 <- urlsToDocs(urls2)
-#' sapply(docs, function(x) attr(x, "XMLsource"))
-#' class(docs[[1]])
-#' 
-#' #better to define a handler?
-#' test <- xmlTreeParse(urls[[1]], handlers=list(atbat=f), asTree=FALSE)
             
 urlsToDocs <- function(urls){
   docs <- NULL
@@ -34,35 +24,30 @@ urlsToDocs <- function(urls){
 #' 
 #' Essentially a recursive call to \link{getNodeSet}.
 #' 
+#' @param docs XML documents
+#' @param xpath xpath expression
+#' @importFrom XML getNodeSet
 #' @export
-#' @examples
-#' nodes <- docsToNodes(docs, node="atbat")
-#' t <- docsToNodes(docs, node="/") #select the root
-#' 
-#' t2 <- docsToNodes(docs2, node="/highlights/*")
 
-docsToNodes <- function(docs, node) {
-  rapply(docs, function(x) getNodeSet(x, node), 
-         class=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+docsToNodes <- function(docs, xpath) {
+  #I should really figure which class I want...
+  rapply(docs, function(x) getNodeSet(x, xpath), 
+         classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
 }
 
 #' Coerce XML Nodes into a list with both attributes and values
 #' 
 #' Essentially a recursive call to \link{xmlToList}.
 #' 
+#' @param nodes A collection of XML nodes. Should be the output from \link{docsToNodes}.
+#' @importFrom XML xmlToList
 #' @export
-#' @examples
-#' l <- nodesToList(t)
-#' #finds the number of levels in the list -- which should correspond to the number of xmlChildren
-#' depth <- function(this) ifelse(is.list(this), 1L + max(sapply(this, depth)), 0L)
-#' depth(l)
-#' l2 <- nodesToList(t2)
-#' depth(l2)
 #' 
 
 nodesToList <- function(nodes){
+  #I should really figure which class I want...
   rapply(nodes, function(x) xmlToList(x),
-    class=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
+    classes=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
 }
 
 #' Coerce lists of character vectors into lists of matrices
@@ -70,21 +55,10 @@ nodesToList <- function(nodes){
 #' This function gathers vectors under the same level of the list hierarchy and binds those common vectors into a matrix.
 #' In XML terms, this function coerces XML attributes and XML values into a matrix for a particular XML node.
 #' 
+#' @param l list. Should be the output from \link{nodesToList}. 
 #' @return A list of matrices. Each element name reflects where in the list hierarchy the information came from.
 #' @importFrom plyr rbind.fill.matrix
 #' @export
-#' @examples
-#' m <- listsToMatrix(l)
-#' names(m)
-#' m[[1]]
-#' m[[2]]
-#' df <- lapply(m, function(x) data.frame(x, stringsAsFactors=FALSE))
-#' 
-#' m2 <- listsToMatrix(l2)
-#' names(m2)
-#' m2[[1]]
-#' 
-#' 
 
 listsToMatrix <- function(l) {
   #adapted from knowledege gained from here:
