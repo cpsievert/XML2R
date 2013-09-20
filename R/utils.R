@@ -35,6 +35,7 @@ docsToNodes <- function(docs, xpath) {
          classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
 }
 
+
 #' Coerce XML Nodes into a list with both attributes and values
 #' 
 #' Essentially a recursive call to \link{xmlToList}.
@@ -58,32 +59,68 @@ nodesToList <- function(nodes){
 #' @param l list. Should be the output from \link{nodesToList}. 
 #' @return A list of matrices. Each element name reflects where in the list hierarchy the information came from.
 #' @importFrom plyr rbind.fill.matrix
+#' @importFrom plyr amv_dimnames
 #' @export
 
 listsToMatrix <- function(l) {
   #adapted from knowledege gained from here:
   #http://stackoverflow.com/questions/8139677/how-to-flatten-a-list-to-a-list-without-coercion?
   ##http://stackoverflow.com/questions/18862601/extract-name-hierarchy-for-each-leaf-of-a-nested-list
-  nest <- rapply(l, function(x) 1L)
-  #num <- rapply(l, function(x) if (name(x) == "pitch") 1L)
-  len <- sum(nest)
-  nms <- names(nest)
-  temp <- gsub('.attrs', 'attrs', nms)
-  idx <- gsub('\\.', '//', temp)
+
+  #Assuming the names of the list elements holding XML values (and only values) will be NULL, we can distinguish between values/attributes
+  #By also assuming that values appear immediately before their respective attributes (which appears to be the way xmlToList works),
+  #we append the XML value to a row of attributes (given that their from the same node)
+  name.len <- rapply(l, function(x) length(names(x)))  
+  nms <- names(name.len)
+  list.len <- length(name.len)
+  # turn '..attr' into '.attr' -- note it show up multiple times in a name
+  temp <- gsub('.attrs', 'attrs', fixed=TRUE, nms)
+  idx <- gsub('.', '//', fixed=TRUE, temp)
   #select the url prefix and replace with nothing
   node.sets <- sub("url([0-9]+)//", "", idx)
   urls <- sub("//.*$", "", idx)
+  suffix <- sub(".*//", "", node.sets)
+  indicies <- which(name.len == 0 & suffix %in% "text") #tracks which XML values should be appended to the sequential row
+  
   #placeholder for the flattened list hierarchy
-  sl <- vector('list', len)
+  holder <- vector('list', list.len)
   i <- 0L
   #fill up placeholder with relevant info
-  rapply(l, function(x) { i <<- i+1L 
-                          sl[[i]] <<- cbind(matrix(x, nrow=1), urls[[i]])
-                          colnames(sl[[i]]) <<- c(names(x), "source_url") 
-                        })
-  stopifnot(length(sl) == length(idx))
-  tapply(sl, INDEX=node.sets, rbind.fill.matrix)
+  rapply(l, function(x) { 
+              i <<- i+1L 
+              holder[[i]] <<- matrix(x, nrow=1)
+              nmz <- names(x)
+              if (is.null(nmz)) nmz <- "XML_value"
+              colnames(holder[[i]]) <<- nmz
+            })
+  #Append XML_value column to the appropriate attributes, then remove the XML value elements
+  #Note that this assumes the value always appears before the attributes in the list order
+  values <- holder[indicies]
+  add.values <- holder[indicies+1]
+  holder[indicies+1] <- mapply(function(x, y){ cbind(x, y) }, add.values, values, SIMPLIFY=FALSE)
+  holder[indicies] <- NULL
+  urls2 <- lapply(urls[-indicies], function(x){
+                                      m <- matrix(x, nrow=1, ncol=1)
+                                      colnames(m) <- "URL_source"
+                                      m
+                                    })
+  
+  holder2 <- mapply(function(x, y) cbind(x, y), holder, urls2)
+  node.sets2 <- node.sets[-indicies]
+  temp2 <- temp[-indicies]
+  tapply(holder2, INDEX=node.sets2, rbind.fill.matrix)
 }
+
+#stopifnot(sum(counts) == length(elements))
+#Here we assume that XML values ALWAYS terminate an XML node.
+#The benefit is that we can treat XML values as another attribute of a node (which let's us treat everything as one row/observation).
+#   names(elements) <- gsub("\\.text$", "\\.XML_value", names(elements))
+#   idx <- names(counts)
+#   temp <- sub("\\.text$", "", idx)
+#   idx <- sub("\\.text", "", temp)
+#   nms <- rapply(l, names)
+#   len <- length(counts)
+#   nms2 <- names(nest)
 
 #nl <- rapply(l, function(x) gsub("\\.", "_", x), how="replace")
 ##worth it??

@@ -9,5 +9,6 @@ TO DO:
 
 (1) Syntax for binding tables with "partially common" ancestors
 (2) Preserve ordering of nodes (for creating atbat key)
+(3) Add some tests using testthat
 (3) Upload to CRAN
 (4) Add dependency to pitchRx

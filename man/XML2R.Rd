@@ -44,7 +44,10 @@ head(dat.atbat[[1]])
 
 urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
-dat3 <- XML2R(urls)
+dat3 <- XML2R(urls2)
+
+cens <- "http://www.census.gov/developers/data/sf1.xml"
+census <- XML2R(cens)
 }
 }
 \seealso{
