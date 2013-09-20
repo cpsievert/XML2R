@@ -95,20 +95,20 @@ listsToMatrix <- function(l) {
             })
   #Append XML_value column to the appropriate attributes, then remove the XML value elements
   #Note that this assumes the value always appears before the attributes in the list order
-  values <- holder[indicies]
-  add.values <- holder[indicies+1]
-  holder[indicies+1] <- mapply(function(x, y){ cbind(x, y) }, add.values, values, SIMPLIFY=FALSE)
-  holder[indicies] <- NULL
-  urls2 <- lapply(urls[-indicies], function(x){
-                                      m <- matrix(x, nrow=1, ncol=1)
-                                      colnames(m) <- "URL_source"
-                                      m
-                                    })
-  
-  holder2 <- mapply(function(x, y) cbind(x, y), holder, urls2)
-  node.sets2 <- node.sets[-indicies]
-  temp2 <- temp[-indicies]
-  tapply(holder2, INDEX=node.sets2, rbind.fill.matrix)
+  if (length(indicies) > 0) {
+    values <- holder[indicies]
+    add.values <- holder[indicies+1]
+    holder[indicies+1] <- mapply(function(x, y){ cbind(x, y) }, add.values, values, SIMPLIFY=FALSE)
+    holder[indicies] <- NULL
+    urls <- lapply(urls[-indicies], function(x){
+      m <- matrix(x, nrow=1, ncol=1)
+      colnames(m) <- "URL_source"
+      m
+    })
+    node.sets <- node.sets[-indicies]
+  }
+  holder <- mapply(function(x, y) cbind(x, y), holder, urls, SIMPLIFY=FALSE)
+  tapply(holder, INDEX=node.sets, rbind.fill.matrix)
 }
 
 #stopifnot(sum(counts) == length(elements))
