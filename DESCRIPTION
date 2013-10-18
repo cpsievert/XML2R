@@ -1,11 +1,11 @@
 Package: XML2R
 Title: EasieR XML data collection
-Version: 0.1
+Version: 0.0.1
 Author: Carson Sievert <sievert@iastate.edu>
 Maintainer: Carson Sievert <sievert@iastate.edu>
 Description: XML2R is a collection of convenient functions for coercing XML
     into multiple matrices or data frame(s).
-License: MIT
+License: GPL (>=2)
 Depends:
     R (>= 2.15.1)
 Imports:
