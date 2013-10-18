@@ -1,6 +1,5 @@
 Package: XML2R
-Title: Convenient functions for coercing XML into multiple matrices or data
-    frame(s).
+Title: EasieR XML data collection
 Version: 0.1
 Author: Carson Sievert <sievert@iastate.edu>
 Maintainer: Carson Sievert <sievert@iastate.edu>
@@ -15,5 +14,6 @@ Imports:
 Date: 2013-08-24
 Collate:
     'utils.R'
-    'urlsToDataFrame.R'
+    'XML2R.R'
+URL: http://cpsievert.github.com/XML2R
 BugReports: http://github.com/cpsievert/XML2R/issues

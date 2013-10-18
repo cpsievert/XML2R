@@ -1,20 +1,20 @@
 \name{collapse}
 \alias{collapse}
-\title{Collapse a list of matrices (or data frames) into a smaller list of larger matrices or data frames}
+\title{Collapse a list of observations into a list of tables.}
 \usage{
-  collapse(m, condition = "pitch")
+  collapse(obs)
 }
 \arguments{
-  \item{m}{list of matrices or data frames}
-
-  \item{condition}{A partial match of names(m).}
+  \item{obs}{list of observations.}
 }
 \value{
   Returns list with one element for each relevant XML node.
-  Each element contains a matrix by default.
+  Each element contains a matrix.
 }
 \description{
-  Collapse a list of matrices (or data frames) into a
-  smaller list of larger matrices or data frames
+  This function aggregates all observations with a similar
+  name into a common table. Note that observations with a
+  particular name don't need consistent variables (any
+  missing information is filled with NAs).
 }
 

@@ -8,6 +8,10 @@
   \item{nodes}{A collection of XML nodes. Should be the
   output from \link{docsToNodes}.}
 }
+\value{
+  A nested list with a structure that resembles the XML
+  structure
+}
 \description{
   Essentially a recursive call to \link{xmlToList}.
 }

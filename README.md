@@ -1,14 +1,14 @@
 XML2R
 =======
 
-`XML2R` is a collection of convenient functions for coercing XML into data frame(s)
+`XML2R`: EasieR XML data collection. For an introduction to the package, see [here](http://cpsievert.github.io/XML2R/)
 
 To install the developmental version on github use: `library(devtools); install_github("XML2R", "cpsievert")`
 
 TO DO:
 
-(1) Syntax for binding tables with "partially common" ancestors
-(2) Preserve ordering of nodes (for creating atbat key)
-(3) Add some tests using testthat
-(3) Upload to CRAN
-(4) Add dependency to pitchRx
+(1) Fix naming of observations when no children exist   
+(2) Traverse all children when creating key?   
+(3) Add some tests using testthat   
+(4) Upload to CRAN   
+(5) Add dependency to pitchRx   

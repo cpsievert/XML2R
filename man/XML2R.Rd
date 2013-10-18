@@ -22,26 +22,13 @@
   Each element contains a matrix by default.
 }
 \description{
-  The main function of the XML2R package. Documentation to
-  come...
+  This function is an experimental wrapper around
+  \link{XML2Obs}. One should only use this function over
+  \link{XML2Obs} if keys already exist in the XML data and
+  ancestory doesn't need to be altered.
 }
 \examples{
 \dontrun{
-pre <- "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/"
-post <- c("gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-           "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
-urls <- paste0(pre, post)
-#collects everything
-dat <- XML2R(urls)
-names(dat)
-dat[[1]] #game level
-dat[[2]] #inning level
-head(dat[[3]]) #action level
-head(dat[[4]]) #atbat level
-#collects everything at the atbat level and lower (ie, pitch, runner, etc)
-dat.atbat <- XML2R(urls, xpath="//atbat")
-head(dat.atbat[[1]])
-
 urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
 dat3 <- XML2R(urls2)
@@ -52,6 +39,6 @@ census <- XML2R(cens)
 }
 \seealso{
   \link{urlsToDocs}, \link{docsToNodes},
-  \link{nodesToList}, \link{listsToMatrix}
+  \link{nodesToList}, \link{listsToObs}
 }
 
