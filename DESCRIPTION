@@ -11,7 +11,7 @@ Depends:
 Imports:
     XML,
     plyr
-Date: 2013-08-24
+Date: 2013-10-19
 Collate:
     'utils.R'
     'XML2R.R'
