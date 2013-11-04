@@ -41,6 +41,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
 #' @param xpath XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
 #' @param append.value logical. Should the XML value be appended for relevant observations?
+#' @param quiet logical. Print file name currently being parsed?
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
 #' @return A list of "observations" and the "url_map" element. 
 #' @export
@@ -73,9 +74,9 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' obz <- XML2Obs(urls2)
 #' unique(names(obz))
 
-XML2Obs <- function(urls, xpath, append.value=TRUE) {
+XML2Obs <- function(urls, xpath, append.value=TRUE, quiet=FALSE) {
   if (missing(xpath)) xpath <- "/"
-  docs <- urlsToDocs(urls)
+  docs <- urlsToDocs(urls, quiet)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) #select the root
   rm(docs)
