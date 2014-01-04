@@ -2,7 +2,8 @@
 \alias{XML2Obs}
 \title{Parse XML files into a list of "observations"}
 \usage{
-  XML2Obs(urls, xpath, append.value = TRUE)
+  XML2Obs(urls, xpath, append.value = TRUE,
+    as.equiv = TRUE, quiet = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -16,6 +17,13 @@
 
   \item{append.value}{logical. Should the XML value be
   appended for relevant observations?}
+
+  \item{as.equiv}{logical. Should observations from two
+  different files (but the same ancestory) have the same
+  name returned?}
+
+  \item{quiet}{logical. Print file name currently being
+  parsed?}
 }
 \value{
   A list of "observations" and the "url_map" element.
@@ -53,11 +61,11 @@ pitch <- lvls[grep("pitch", lvls)]
 runner <- lvls[grep("runner", lvls)]
 action <- lvls[grep("action", lvls)]
 po <- lvls[grep("po", lvls)]
-tmp <- rename(obs, equiv=pitch, diff.name="inning")
-tmp <- rename(tmp, equiv=runner, diff.name="inning")
-tmp <- rename(tmp, equiv=po, diff.name="inning")
-tmp <- rename(tmp, equiv=action, diff.name="inning")
-obs2 <- rename(tmp, equiv=c("game//inning//top//atbat", "game//inning//bottom//atbat"))
+tmp <- re_name(obs, equiv=pitch, diff.name="inning")
+tmp <- re_name(tmp, equiv=runner, diff.name="inning")
+tmp <- re_name(tmp, equiv=po, diff.name="inning")
+tmp <- re_name(tmp, equiv=action, diff.name="inning")
+obs2 <- re_name(tmp, equiv=c("game//inning//top//atbat", "game//inning//bottom//atbat"))
 unique(names(obs2))
 tmp2 <- add_key(obs2, parent="game//inning", key.name="inning_key")
 obswkey <- add_key(tmp2, parent="game//inning//atbat", key.name="atbat_key")

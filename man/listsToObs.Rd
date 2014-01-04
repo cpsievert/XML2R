@@ -2,7 +2,7 @@
 \alias{listsToObs}
 \title{Flatten nested list into a list of observations}
 \usage{
-  listsToObs(l, append.value = TRUE)
+  listsToObs(l, append.value = TRUE, as.equiv = TRUE)
 }
 \arguments{
   \item{l}{list. Should be the output from
