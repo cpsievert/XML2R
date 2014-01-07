@@ -2,7 +2,7 @@
 \alias{XML2R}
 \title{Parse XML files into (a list of) matrices or data frame(s)}
 \usage{
-  XML2R(urls, xpath, df = FALSE)
+XML2R(urls, xpath, df = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -18,14 +18,14 @@
   frames?}
 }
 \value{
-  Returns list with one element for each relevant XML node.
-  Each element contains a matrix by default.
+Returns list with one element for each relevant XML node.
+Each element contains a matrix by default.
 }
 \description{
-  This function is an experimental wrapper around
-  \link{XML2Obs}. One should only use this function over
-  \link{XML2Obs} if keys already exist in the XML data and
-  ancestory doesn't need to be altered.
+This function is an experimental wrapper around
+\link{XML2Obs}. One should only use this function over
+\link{XML2Obs} if keys already exist in the XML data and
+ancestory doesn't need to be altered.
 }
 \examples{
 \dontrun{
@@ -38,7 +38,7 @@ census <- XML2R(cens)
 }
 }
 \seealso{
-  \link{urlsToDocs}, \link{docsToNodes},
-  \link{nodesToList}, \link{listsToObs}
+\link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList},
+\link{listsToObs}
 }
 

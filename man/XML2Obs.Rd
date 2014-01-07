@@ -2,8 +2,8 @@
 \alias{XML2Obs}
 \title{Parse XML files into a list of "observations"}
 \usage{
-  XML2Obs(urls, xpath, append.value = TRUE,
-    as.equiv = TRUE, quiet = FALSE)
+XML2Obs(urls, xpath, append.value = TRUE, as.equiv = FALSE,
+  url.map = FALSE, quiet = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -22,40 +22,48 @@
   different files (but the same ancestory) have the same
   name returned?}
 
+  \item{url.map}{logical. If TRUE, the 'url_key' column
+  will contain a condensed url identifier (for each
+  observation) and full urls will be stored in the
+  "url_map" element. If FALSE, the full urls are included
+  (for each observation) as a 'url' column and no "url_map"
+  is included.}
+
   \item{quiet}{logical. Print file name currently being
   parsed?}
 }
 \value{
-  A list of "observations" and the "url_map" element.
+A list of "observations" and (possibly) the "url_map"
+element.
 }
 \description{
-  This function takes a collection of urls that point to
-  XML files and coerces the relevant info into a list of
-  observations. An "observation" is defined as a matrix
-  with one row. An observation can also be thought of as a
-  single instance of XML attributes (and value) for a
-  particular level in the XML hierarchy. The names of the
-  list reflect the XML node ancestory for which each
-  observation was extracted from.
+This function takes a collection of urls that point to XML
+files and coerces the relevant info into a list of
+observations. An "observation" is defined as a matrix with
+one row. An observation can also be thought of as a single
+instance of XML attributes (and value) for a particular
+level in the XML hierarchy. The names of the list reflect
+the XML node ancestory for which each observation was
+extracted from.
 }
 \details{
-  It's worth noting that a "url_key" column is appended to
-  each observation to help track the origin of each
-  observation. The value of the "url_key" column is not the
-  actual file name, but a simplified identifier to avoid
-  unnecessarily repeating long file names for each
-  observation. For this reason, an addition element (named
-  "url_map") is added to the list of observations in case
-  the actual file named want to be used.
+It's worth noting that a "url_key" column is appended to
+each observation to help track the origin of each
+observation. The value of the "url_key" column is not the
+actual file name, but a simplified identifier to avoid
+unnecessarily repeating long file names for each
+observation. For this reason, an addition element (named
+"url_map") is added to the list of observations in case the
+actual file named want to be used.
 }
 \examples{
 #construct desired file names for first example
 pre <- "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/"
 post <- c("gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-           "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
+       "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
 urls <- paste0(pre, post)
 #parse files into a list of observations
-obs <- XML2Obs(urls)
+obs <- XML2Obs(urls, url.map=FALSE)
 lvls <- unique(names(obs))
 pitch <- lvls[grep("pitch", lvls)]
 runner <- lvls[grep("runner", lvls)]
@@ -78,7 +86,7 @@ obz <- XML2Obs(urls2)
 unique(names(obz))
 }
 \seealso{
-  \link{urlsToDocs}, \link{docsToNodes},
-  \link{nodesToList}, \link{listsToObs}
+\link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList},
+\link{listsToObs}
 }
 

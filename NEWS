@@ -1,4 +1,20 @@
-		CHANGES IN XML2R VERSION 0.0.1
+        CHANGES IN XML2R VERSION 0.0.3
+
+IMPROVEMENTS
+
+  - url.map option was added to XML2Obs.
+
+    CHANGES IN XML2R VERSION 0.0.2
+
+MAJOR CHANGES
+
+  - Function rename() was changed to re_name() to avoid NAMESPACE issue conflicts with plyr.
+
+MINOR FIXES
+
+  - quiet option added to several functions
+
+    CHANGES IN XML2R VERSION 0.0.1
 
 NEW FEATURES
 

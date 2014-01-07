@@ -2,7 +2,7 @@
 \alias{urlsToDocs}
 \title{Parse XML Files into XML Documents}
 \usage{
-  urlsToDocs(urls, quiet = FALSE)
+urlsToDocs(urls, quiet = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -13,6 +13,6 @@
   parsed?}
 }
 \description{
-  Essentially a recursive call to \link{xmlParse}.
+Essentially a recursive call to \link{xmlParse}.
 }
 

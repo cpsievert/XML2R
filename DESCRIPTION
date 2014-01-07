@@ -1,6 +1,6 @@
 Package: XML2R
 Title: EasieR XML data collection
-Version: 0.0.2
+Version: 0.0.3
 Author: Carson Sievert <sievert@iastate.edu>
 Maintainer: Carson Sievert <sievert@iastate.edu>
 Description: XML2R is a collection of convenient functions for coercing XML
@@ -11,9 +11,6 @@ Depends:
     XML
 Imports:
     plyr
-Date: 2013-10-19
-Collate:
-    'utils.R'
-    'XML2R.R'
+Date: 2014-01-04
 URL: http://cpsievert.github.com/XML2R
 BugReports: http://github.com/cpsievert/XML2R/issues

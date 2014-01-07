@@ -2,17 +2,17 @@
 \alias{nodesToList}
 \title{Coerce XML Nodes into a list with both attributes and values}
 \usage{
-  nodesToList(nodes)
+nodesToList(nodes)
 }
 \arguments{
   \item{nodes}{A collection of XML nodes. Should be the
   output from \link{docsToNodes}.}
 }
 \value{
-  A nested list with a structure that resembles the XML
-  structure
+A nested list with a structure that resembles the XML
+structure
 }
 \description{
-  Essentially a recursive call to \link{xmlToList}.
+Essentially a recursive call to \link{xmlToList}.
 }
 
