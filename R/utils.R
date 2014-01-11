@@ -120,7 +120,8 @@ listsToObs <- function(l, urls, append.value=TRUE, as.equiv=TRUE, url.map=TRUE) 
   }
   if (url.map) {
     holder <- mapply(function(x, y) cbind(x, url_key=y), holder, urlz, SIMPLIFY=FALSE)
-    holder[["url_map"]] <- url_map
+    holder[[length(holder) + 1]] <- url_map #append url_map to end of list
+    node.sets <- c(node.sets, "url_map")
   } else {
     tab <- table(urlz)
     reps <- tab[match(url.count, names(tab))]
