@@ -32,7 +32,7 @@ urlsToDocs <- function(urls, quiet=FALSE){
 
 docsToNodes <- function(docs, xpath) {
   #I should really figure which class I want...
-  rapply(docs, function(x) getNodeSet(x, xpath), 
+  rapply(docs, function(x) getNodeSet(x, path=xpath), 
          classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
 }
 
@@ -95,9 +95,9 @@ listsToObs <- function(l, urls, append.value=TRUE, as.equiv=TRUE, url.map=TRUE) 
   }
   urlz <- sub("//.*$", "", idx)
   suffix <- sub(".*//", "", node.sets)
-  indicies <- which(name.len == 0 & suffix %in% "text") #tracks which XML values should be appended to the sequential row
-  #placeholder for the flattened list hierarchy
-  holder <- vector('list', list.len)
+  #tracks which XML values should be appended to the sequential row
+  indicies <- which(name.len == 0 & suffix %in% "text") 
+  holder <- vector('list', list.len) #placeholder for the flattened list hierarchy
   i <- 0L
   #fill up placeholder with relevant info
   rapply(l, function(x) { 
@@ -146,11 +146,12 @@ listsToObs <- function(l, urls, append.value=TRUE, as.equiv=TRUE, url.map=TRUE) 
 #' @param equiv character vector with the appropriate (unique) names that should be regarded "equivalent".
 #' @param diff.name character string used for naming the variable that is appended to any observations whose name was overwritten. 
 #' The value for this variable is the difference in from the original name and the overwritten name.
+#' @param rename.as character string to override naming of observations that are renamed.
 #' @param quiet logical. Include message about how observations are being renamed?
 #' @return A list of "observations". 
 #' @export
 
-re_name <- function(obs, namez, equiv, diff.name="diff_name", quiet=FALSE){
+re_name <- function(obs, namez, equiv, diff.name="diff_name", rename.as, quiet=FALSE){
   if (missing(equiv)) {
     warning("Must include equiv argument!")
     return(obs)
@@ -183,11 +184,13 @@ re_name <- function(obs, namez, equiv, diff.name="diff_name", quiet=FALSE){
   } else {
     label <- paste0(keeps, collapse="//") 
   }
+  if (!missing(rename.as)) label <- rename.as
   if (!quiet) message(paste0("Renaming all list elements named: \n", paste(equiv, collapse="  OR  "), "\nwith\n", label))
   diffs <- lapply(baseline, function(x) paste(x[!x %in% keeps], collapse="//")) #keeps the nodes that will be 'overwritten'
   idx <- nms %in% equiv
   #idx <- grepl(paste(equiv, collapse="||"), nms)  #grep here instead?
-  names(obs)[idx] <- label #overwrite the names
+  #overwrite the names
+  names(obs)[idx] <- label
   #get the information that was "lost" when overwritting names and append a new column accordingly
   klass <- as.character(diffs[match(nms[idx], names(diffs))]) 
   obs[idx] <- mapply(function(x, y) cbind(x, `colnames<-`(cbind(y), diff.name)), obs[idx], klass, SIMPLIFY=FALSE)

@@ -2,7 +2,8 @@
 \alias{re_name}
 \title{Rename rows of a list}
 \usage{
-re_name(obs, namez, equiv, diff.name = "diff_name", quiet = FALSE)
+re_name(obs, namez, equiv, diff.name = "diff_name", rename.as,
+  quiet = FALSE)
 }
 \arguments{
   \item{obs}{list. Should be the output from \link{XML2Obs}
@@ -20,6 +21,9 @@ re_name(obs, namez, equiv, diff.name = "diff_name", quiet = FALSE)
   was overwritten. The value for this variable is the
   difference in from the original name and the overwritten
   name.}
+
+  \item{rename.as}{character string to override naming of
+  observations that are renamed.}
 
   \item{quiet}{logical. Include message about how
   observations are being renamed?}

@@ -2,7 +2,7 @@
 \alias{XML2Obs}
 \title{Parse XML files into a list of "observations"}
 \usage{
-XML2Obs(urls, xpath, append.value = TRUE, as.equiv = FALSE,
+XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
   url.map = FALSE, quiet = FALSE)
 }
 \arguments{

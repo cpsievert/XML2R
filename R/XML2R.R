@@ -78,11 +78,11 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' obz <- XML2Obs(urls2)
 #' unique(names(obz))
 
-XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=FALSE, url.map=FALSE, quiet=FALSE) {
-  if (missing(xpath)) xpath <- "/"
+XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, quiet=FALSE) {
+  if (missing(xpath)) xpath <- "/"  #select the root
   docs <- urlsToDocs(urls, quiet)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
-  nodes <- docsToNodes(docs, xpath) #select the root
+  nodes <- docsToNodes(docs, xpath) 
   rm(docs)
   l <- nodesToList(nodes)
   rm(nodes)

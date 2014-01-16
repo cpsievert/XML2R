@@ -1,3 +1,9 @@
+      CHANGES IN XML2R VERSION 0.0.3
+
+IMPROVEMENTS
+
+  - url.map option was added to XML2Obs.
+  
     CHANGES IN XML2R VERSION 0.0.2
 
 MAJOR CHANGES
