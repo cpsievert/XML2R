@@ -200,22 +200,25 @@ re_name <- function(obs, namez, equiv, diff.name="diff_name", rename.as, quiet=F
 #' Add a key to connect observations
 #' 
 #' This function takes a list of "observations" (that is, a list of matrices with one row) and appends a new column to 
-#' each relevant observation. This column is a key that connects \code{parent}s to \code{child}ren in case their 
-#' observations need to be joined together at a later point. 
+#' each relevant observation. This column is a 'key' that connects a specified \code{parent} to each one
+#' of its descendants. This 'key' is meant to be used for merging/joining tables at a later point (that is, 
+#' after observations have been \link{collapse}d into tables).
 #' 
 #' @param obs list. Should be the output from \link{listsToObs}. 
 #' @param parent character string. Should be present in the names of \code{obs}.
-#' @param child character string. Should be present in the names of \code{obs}.
+#' @param recycle character string that matches a variable name among \code{parent} observations.
+#' Note that if this argument is used, \code{key.name} is ignored.
 #' @param key.name The desired column name of the newly generated key.
 #' @param quiet logical. Include message about the keys being generated?
-#' @return A list of "observations".
+#' @return A list of observations.
 #' @export
 
-add_key <- function(obs, parent, child, key.name="key_name", quiet=FALSE){
+add_key <- function(obs, parent, recycle, key.name="key_name", quiet=FALSE){
   if (missing(parent)) {
     warning("You must provide the parent argument!")
     return(obs)
   }
+  if (length(parent) > 1) warning("Please specify one parent at a time!")
   nms <- names(obs)
   if (is.null(nms)) {
     warning("The observations don't not have any names!")
@@ -226,23 +229,24 @@ add_key <- function(obs, parent, child, key.name="key_name", quiet=FALSE){
     warning("The parent argument you provided does not match any observations.")
     return(obs)
   }
-  if (missing(child)){
-    fetus <- un[-which(un == parent)]
-    children <- fetus[grep(paste0(parent, "//.*"), fetus)]
-    if (length(children) == 0){
-      warning(paste0("No children were found for the ", parent, " node."))
-      return(obs)
-    } else {
-      if (!quiet) message(paste0("A key for the following children will be generated for the ", parent, " node:\n", paste0(children, collapse="\n")))
-    }
+  fetus <- un[-which(un == parent)]
+  children <- fetus[grep(paste0(parent, "//.*"), fetus)]
+  if (length(children) == 0){
+    warning(paste0("No children were found for the ", parent, " node."))
+    return(obs)
   } else {
-    children <- child
+    if (!quiet) message(paste0("A key for the following children will be generated for the ", parent, " node:\n", paste0(children, collapse="\n")))
   }
-  #first add parent (or outer) index
-  elders <- nms == parent
-  outer_index <- seq_len(sum(elders))
-  obs[elders] <- mapply(function(x, y) cbind(x, `colnames<-`(cbind(y), key.name)), obs[elders], outer_index, SIMPLIFY=FALSE) 
-  #now add the (inner) index for the children
+  if (missing(recycle)) { #add an (outer) index to parent
+    elders <- nms == parent
+    outer_index <- seq_len(sum(elders))
+    obs[elders] <- mapply(function(x, y) cbind(x, `colnames<-`(cbind(y), key.name)), obs[elders], outer_index, SIMPLIFY=FALSE) 
+  } else { #use a specified variable for (outer) index
+    elders <- nms == parent
+    outer_index <- lapply(obs[elders], function(x) x[,recycle])
+    key.name <- recycle
+  }
+  #now add the (inner) index for each descendent
   for (child in children) {
     kids <- nms == child
     kid.idx <- which(kids)

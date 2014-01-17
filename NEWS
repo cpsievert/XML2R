@@ -1,4 +1,10 @@
-        CHANGES IN XML2R VERSION 0.0.3
+    CHANGES IN XML2R VERSION 0.0.4
+
+MAJOR CHANGES/IMPROVEMENTS
+
+  - The child argument was removed from add_key(). The recycle argument was added to add_key() which allows one to use an existing value in the parent node as a key to connect the parent observation to its descendents (thanks Carlos Scheidegger) 
+
+    CHANGES IN XML2R VERSION 0.0.3
 
 IMPROVEMENTS
 

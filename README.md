@@ -10,5 +10,4 @@ To install the github version use: `library(devtools); install_github("XML2R", "
 TO DO:
 
 (1) Fix naming of observations when no children exist   
-(2) Traverse all children when creating key?   
-(3) Add some tests using testthat   
+(2) Add some tests using testthat   
