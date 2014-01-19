@@ -1,7 +1,7 @@
 export(XML2Obs)
 export(XML2R)
 export(add_key)
-export(collapse)
+export(collapse_obs)
 export(docsToNodes)
 export(listsToObs)
 export(nodesToList)

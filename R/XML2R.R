@@ -23,7 +23,7 @@
 XML2R <- function(urls, xpath, df=FALSE) {
   obs <- XML2Obs(urls, xpath)
   #add an option to try to automatically generate keys?
-  collapse(obs)
+  collapse_obs(obs)
 }
 
 #' Parse XML files into a list of "observations"

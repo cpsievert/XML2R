@@ -207,13 +207,12 @@ re_name <- function(obs, namez, equiv, diff.name="diff_name", rename.as, quiet=F
 #' @param obs list. Should be the output from \link{listsToObs}. 
 #' @param parent character string. Should be present in the names of \code{obs}.
 #' @param recycle character string that matches a variable name among \code{parent} observations.
-#' Note that if this argument is used, \code{key.name} is ignored.
 #' @param key.name The desired column name of the newly generated key.
 #' @param quiet logical. Include message about the keys being generated?
 #' @return A list of observations.
 #' @export
 
-add_key <- function(obs, parent, recycle, key.name="key_name", quiet=FALSE){
+add_key <- function(obs, parent, recycle, key.name, quiet=FALSE){
   if (missing(parent)) {
     warning("You must provide the parent argument!")
     return(obs)
@@ -240,11 +239,12 @@ add_key <- function(obs, parent, recycle, key.name="key_name", quiet=FALSE){
   if (missing(recycle)) { #add an (outer) index to parent
     elders <- nms == parent
     outer_index <- seq_len(sum(elders))
+    if (missing(key.name)) key.name <- "key_name"
     obs[elders] <- mapply(function(x, y) cbind(x, `colnames<-`(cbind(y), key.name)), obs[elders], outer_index, SIMPLIFY=FALSE) 
   } else { #use a specified variable for (outer) index
     elders <- nms == parent
     outer_index <- lapply(obs[elders], function(x) x[,recycle])
-    key.name <- recycle
+    if (missing(key.name)) key.name <- recycle
   }
   #now add the (inner) index for each descendent
   for (child in children) {
@@ -269,7 +269,7 @@ add_key <- function(obs, parent, recycle, key.name="key_name", quiet=FALSE){
 #' @importFrom plyr rbind.fill.matrix
 #' @export
 
-collapse <- function(obs) {
+collapse_obs <- function(obs) {
   nms <- names(obs)
   #Exclude url_map from collapsing if it exists
   map <- grep("url_map", nms)
