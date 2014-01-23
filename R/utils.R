@@ -197,12 +197,11 @@ re_name <- function(obs, namez, equiv, diff.name="diff_name", rename.as, quiet=F
   return(obs)
 }
 
-#' Add a key to connect observations
+#' Add a key to connect parents to descendants
 #' 
-#' This function takes a list of "observations" (that is, a list of matrices with one row) and appends a new column to 
-#' each relevant observation. This column is a 'key' that connects a specified \code{parent} to each one
-#' of its descendants. This 'key' is meant to be used for merging/joining tables at a later point (that is, 
-#' after observations have been \link{collapse}d into tables).
+#' This function creates a mapping from parent observations to it's descendants (which useful for merging/joining tables).
+#' Either an existing value in the parent observation can be \code{recycle}d to it's descendants or a new column 
+#' will be created (if \code{recycle} is missing).
 #' 
 #' @param obs list. Should be the output from \link{listsToObs}. 
 #' @param parent character string. Should be present in the names of \code{obs}.

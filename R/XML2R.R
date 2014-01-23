@@ -50,33 +50,13 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' @return A list of "observations" and (possibly) the "url_map" element. 
 #' @export
 #' @examples
-#' #construct desired file names for first example
-#' pre <- "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/"
-#' post <- c("gid_2013_06_14_phimlb_colmlb_1/inning/inning_all.xml",
-#'        "gid_2013_06_14_seamlb_oakmlb_1/inning/inning_all.xml")
-#' urls <- paste0(pre, post)
-#' #parse files into a list of observations
-#' obs <- XML2Obs(urls, url.map=FALSE)
-#' lvls <- unique(names(obs))
-#' pitch <- lvls[grep("pitch", lvls)]
-#' runner <- lvls[grep("runner", lvls)]
-#' action <- lvls[grep("action", lvls)]
-#' po <- lvls[grep("po", lvls)]
-#' tmp <- re_name(obs, equiv=pitch, diff.name="inning")       
-#' tmp <- re_name(tmp, equiv=runner, diff.name="inning")
-#' tmp <- re_name(tmp, equiv=po, diff.name="inning")
-#' tmp <- re_name(tmp, equiv=action, diff.name="inning")
-#' obs2 <- re_name(tmp, equiv=c("game//inning//top//atbat", "game//inning//bottom//atbat"))
-#' unique(names(obs2))
-#' tmp2 <- add_key(obs2, parent="game//inning", key.name="inning_key")
-#' obswkey <- add_key(tmp2, parent="game//inning//atbat", key.name="atbat_key")
-#' tables <- collapse(obswkey)
 #' 
-#' #desired file names for second example
-#' urls2 <- c("http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_13/miniscoreboard.xml",
-#'            "http://gd2.mlb.com/components/game/mlb/year_2013/month_06/day_14/miniscoreboard.xml")
-#' obz <- XML2Obs(urls2)
-#' unique(names(obz))
+#' \dontrun{
+#' urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
+#'            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
+#' obs <- XML2Obs(urls)
+#' table(names(obs))
+#' }
 
 XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, quiet=FALSE) {
   if (missing(xpath)) xpath <- "/"  #select the root
@@ -84,8 +64,10 @@ XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) 
   rm(docs)
+  gc()
   l <- nodesToList(nodes)
   rm(nodes)
+  gc()
   obs <- listsToObs(l, urls=valid.urls, append.value=append.value, as.equiv=as.equiv, url.map=url.map)
   return(obs)
 }
