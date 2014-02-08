@@ -45,6 +45,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' @param url.map logical. If TRUE, the 'url_key' column will contain a condensed url identifier (for each observation)
 #' and full urls will be stored in the "url_map" element. If FALSE, the full urls are included (for each observation) 
 #' as a 'url' column and no "url_map" is included.
+#' @param async logical. Allows for asynchronous download requests. This option is passed to the \code{async} option in the \code{RCurl::getURL} function.
 #' @param quiet logical. Print file name currently being parsed?
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
 #' @return A list of "observations" and (possibly) the "url_map" element. 
@@ -58,9 +59,9 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' table(names(obs))
 #' }
 
-XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, quiet=FALSE) {
+XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, async=TRUE, quiet=FALSE) {
   if (missing(xpath)) xpath <- "/"  #select the root
-  docs <- urlsToDocs(urls, quiet)
+  docs <- urlsToDocs(urls, async=async, quiet=quiet)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) 
   rm(docs)

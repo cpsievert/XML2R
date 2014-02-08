@@ -3,7 +3,7 @@
 \title{Parse XML files into a list of "observations"}
 \usage{
 XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
-  url.map = FALSE, quiet = FALSE)
+  url.map = FALSE, async = TRUE, quiet = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
@@ -28,6 +28,10 @@ XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
   "url_map" element. If FALSE, the full urls are included
   (for each observation) as a 'url' column and no "url_map"
   is included.}
+
+  \item{async}{logical. Allows for asynchronous download
+  requests. This option is passed to the \code{async}
+  option in the \code{RCurl::getURL} function.}
 
   \item{quiet}{logical. Print file name currently being
   parsed?}
