@@ -59,7 +59,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' table(names(obs))
 #' }
 
-XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, async=TRUE, quiet=FALSE) {
+XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, async=FALSE, quiet=FALSE) {
   if (missing(xpath)) xpath <- "/"  #select the root
   docs <- urlsToDocs(urls, async=async, quiet=quiet)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
