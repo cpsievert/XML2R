@@ -3,7 +3,7 @@
 \title{Parse XML files into a list of "observations"}
 \usage{
 XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
-  url.map = FALSE, async = TRUE, quiet = FALSE)
+  url.map = FALSE, async = FALSE, quiet = FALSE)
 }
 \arguments{
   \item{urls}{character vector or list of urls that point
