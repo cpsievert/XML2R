@@ -21,7 +21,7 @@ urlsToDocs <- function(urls, async=TRUE, quiet=FALSE) {
     if (!quiet) cat(urls[i], "\n")
     doc <- try_default(xmlParse(text[i], asText=TRUE), NULL, quiet = TRUE)
     if (!is.null(doc)) {
-      attr(doc, "XMLsource") <- i
+      attr(doc, "XMLsource") <- urls[i]
       docs <- c(docs, doc) #Keep non-empty documents
     }
   }

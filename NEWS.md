@@ -1,3 +1,15 @@
+    CHANGES IN XML2R VERSION 0.0.6
+
+MINOR FIX
+
+  - In version 0.5, the url column does not contain the file name (instead, it contains integers). This has consequences for pitchRx, but is now fixed.
+
+    CHANGES IN XML2R VERSION 0.0.5
+
+MAJOR CHANGES/IMPROVEMENTS
+
+  - A dependency to RCurl was added so asynchronous downloads can be done via getURL. This dependency also has the benefit of more robust HTTP downloads.
+  
     CHANGES IN XML2R VERSION 0.0.4
 
 MAJOR CHANGES/IMPROVEMENTS
