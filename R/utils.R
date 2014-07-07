@@ -15,7 +15,11 @@
 urlsToDocs <- function(urls, quiet=FALSE, ...) {
   #keep only urls that exist
   urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-  text <- lapply(urls, function(x) content(GET(x, ...), "text"))
+  text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+  if (length(text) == 0) {
+    warning("No content found. Please double check your urls.")
+    return(text)
+  }
   docs <- NULL
   for (i in seq_along(text)) {
     if (!quiet) cat(urls[i], "\n")
