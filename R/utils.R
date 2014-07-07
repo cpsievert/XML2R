@@ -3,19 +3,19 @@
 #' Essentially a recursive call to \link{xmlParse}.
 #' 
 #' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
-#' @param async logical. Allows for asynchronous download requests. This option is passed to the \code{async} option in the \code{RCurl::getURL} function.
 #' @param quiet logical. Print file name currently being parsed?
+#' @param ... arguments passed along to \link{httr::GET}
 #' @importFrom plyr try_default
 #' @importFrom XML xmlParse
-#' @importFrom RCurl getURL
-#' @importFrom RCurl url.exists
+#' @importFrom httr url_ok
+#' @importFrom httr GET
+#' @importFrom httr content
 #' @export
             
-urlsToDocs <- function(urls, async=TRUE, quiet=FALSE) {
+urlsToDocs <- function(urls, quiet=FALSE, ...) {
   #keep only urls that exist
-  urls <- urls[vapply(urls, url.exists, logical(1), USE.NAMES=FALSE)]
-  if (async && length(urls) > 1) message("Performing asynchronous download. Please be patient.")
-  text <- getURL(urls, async=async)
+  urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
+  text <- lapply(urls, function(x) content(GET(x, ...), "text"))
   docs <- NULL
   for (i in seq_along(text)) {
     if (!quiet) cat(urls[i], "\n")

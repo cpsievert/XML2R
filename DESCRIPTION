@@ -8,10 +8,10 @@ Description: XML2R is a framework that reduces the effort required to transform
     relationships.
 License: GPL (>=2)
 Depends:
-    R (>= 2.15.1),
-    XML
+    R (>= 2.15.1)
 Imports:
-    RCurl,
+    XML,
+    httr,
     plyr
 Date: 2014-03-09
 URL: http://cpsievert.github.com/XML2R
