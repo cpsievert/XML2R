@@ -1,3 +1,14 @@
+    CHANGES IN XML2R VERSION 0.0.7
+
+MAJOR FIX
+
+  - Local XML files are once again supported. See the local argument in XML2Obs/urlsToDocs.
+
+MINOR CHANGES
+
+  - The async (asynchronous download) option was deprecated as httr:GET is now used instead of RCurl::getURL for more flexible http/https requests
+
+
     CHANGES IN XML2R VERSION 0.0.6
 
 MINOR FIX

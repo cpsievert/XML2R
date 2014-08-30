@@ -2,7 +2,8 @@
 #' 
 #' Essentially a recursive call to \link{xmlParse}.
 #' 
-#' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
+#' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
+#' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
 #' @param ... arguments passed along to \link{httr::GET}
 #' @importFrom plyr try_default
@@ -12,10 +13,14 @@
 #' @importFrom httr content
 #' @export
             
-urlsToDocs <- function(urls, quiet=FALSE, ...) {
+urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
   #keep only urls that exist
-  urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-  text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+  if (!local) {
+    urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
+    text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+  } else {
+    text <- urls
+  }
   if (length(text) == 0) {
     warning("No content found. Please double check your urls.")
     return(text)
@@ -23,7 +28,7 @@ urlsToDocs <- function(urls, quiet=FALSE, ...) {
   docs <- NULL
   for (i in seq_along(text)) {
     if (!quiet) cat(urls[i], "\n")
-    doc <- try_default(xmlParse(text[i], asText=TRUE), NULL, quiet = TRUE)
+    doc <- try_default(xmlParse(text[i], asText = !local), NULL, quiet = TRUE)
     if (!is.null(doc)) {
       attr(doc, "XMLsource") <- urls[i]
       docs <- c(docs, doc) #Keep non-empty documents

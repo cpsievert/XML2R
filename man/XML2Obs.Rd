@@ -4,10 +4,10 @@
 \title{Parse XML files into a list of "observations"}
 \usage{
 XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
-  url.map = FALSE, async = FALSE, quiet = FALSE)
+  url.map = FALSE, local = FALSE, quiet = FALSE, ...)
 }
 \arguments{
-\item{urls}{character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).}
+\item{urls}{character vector. Either urls that point to an XML file online or a local XML file name.}
 
 \item{xpath}{XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/").}
 
@@ -19,9 +19,11 @@ XML2Obs(urls, xpath, append.value = TRUE, as.equiv = TRUE,
 and full urls will be stored in the "url_map" element. If FALSE, the full urls are included (for each observation)
 as a 'url' column and no "url_map" is included.}
 
-\item{async}{logical. Allows for asynchronous download requests. This option is passed to the \code{async} option in the \code{RCurl::getURL} function.}
+\item{local}{logical. Should urls be treated as paths to local files?}
 
 \item{quiet}{logical. Print file name currently being parsed?}
+
+\item{...}{arguments passed along to \link{httr::GET}}
 }
 \value{
 A list of "observations" and (possibly) the "url_map" element.
@@ -44,6 +46,11 @@ urls <- c("http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346180.xml",
            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
 obs <- XML2Obs(urls)
 table(names(obs))
+
+# parses local files as well
+players <- system.file("extdata", "players.xml", package = "XML2R")
+obs2 <- XML2Obs(players, local = TRUE)
+table(names(obs2))
 }
 }
 \seealso{

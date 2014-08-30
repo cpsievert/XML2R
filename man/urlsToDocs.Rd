@@ -3,10 +3,12 @@
 \alias{urlsToDocs}
 \title{Parse XML Files into XML Documents}
 \usage{
-urlsToDocs(urls, quiet = FALSE, ...)
+urlsToDocs(urls, local = FALSE, quiet = FALSE, ...)
 }
 \arguments{
-\item{urls}{character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).}
+\item{urls}{character vector. Either urls that point to an XML file online or a local XML file name.}
+
+\item{local}{logical. Should urls be treated as paths to local files?}
 
 \item{quiet}{logical. Print file name currently being parsed?}
 

@@ -38,15 +38,16 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' long file names for each observation. For this reason, an addition element (named "url_map") is added to the list of observations
 #' in case the actual file named want to be used.
 #' 
-#' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
+#' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
 #' @param xpath XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
 #' @param append.value logical. Should the XML value be appended for relevant observations?
 #' @param as.equiv logical. Should observations from two different files (but the same ancestory) have the same name returned?
 #' @param url.map logical. If TRUE, the 'url_key' column will contain a condensed url identifier (for each observation)
 #' and full urls will be stored in the "url_map" element. If FALSE, the full urls are included (for each observation) 
 #' as a 'url' column and no "url_map" is included.
-#' @param async logical. Allows for asynchronous download requests. This option is passed to the \code{async} option in the \code{RCurl::getURL} function.
+#' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
+#' @param ... arguments passed along to \link{httr::GET}
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
 #' @return A list of "observations" and (possibly) the "url_map" element. 
 #' @export
@@ -57,11 +58,17 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #'            "http://gd2.mlb.com/components/game/mlb/year_2013/mobile/346188.xml")
 #' obs <- XML2Obs(urls)
 #' table(names(obs))
+#' 
+#' # parses local files as well
+#' players <- system.file("extdata", "players.xml", package = "XML2R")
+#' obs2 <- XML2Obs(players, local = TRUE)
+#' table(names(obs2))
 #' }
 
-XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE, async=FALSE, quiet=FALSE) {
+XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map = FALSE, 
+                    local = FALSE, quiet = FALSE, ...) {
   if (missing(xpath)) xpath <- "/"  #select the root
-  docs <- urlsToDocs(urls, async=async, quiet=quiet)
+  docs <- urlsToDocs(urls, local, quiet, ...)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) 
   rm(docs)
@@ -69,6 +76,7 @@ XML2Obs <- function(urls, xpath, append.value=TRUE, as.equiv=TRUE, url.map=FALSE
   l <- nodesToList(nodes)
   rm(nodes)
   gc()
-  obs <- listsToObs(l, urls=valid.urls, append.value=append.value, as.equiv=as.equiv, url.map=url.map)
+  obs <- listsToObs(l, urls = valid.urls, append.value = append.value, 
+                    as.equiv = as.equiv, url.map = url.map)
   return(obs)
 }
