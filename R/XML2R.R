@@ -79,6 +79,7 @@ XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map =
   obs <- listsToObs(l, urls = valid.urls, append.value = append.value, 
                     as.equiv = as.equiv, url.map = url.map)
   # throw out url column if there is only one
+  browser()
   if (length(urls) == 1) obs <- lapply(obs, function(x) x[,!grepl("^url$", colnames(x))])
   obs
 }
