@@ -78,5 +78,7 @@ XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map =
   gc()
   obs <- listsToObs(l, urls = valid.urls, append.value = append.value, 
                     as.equiv = as.equiv, url.map = url.map)
-  return(obs)
+  # throw out url column if there is only one
+  if (length(urls) == 1) lapply(obs, function(x) x[,!grepl("^url$", colnames(x))])
+  obs
 }
