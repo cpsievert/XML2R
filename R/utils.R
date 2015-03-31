@@ -239,12 +239,13 @@ add_key <- function(obs, parent, recycle, key.name, quiet=FALSE){
     return(obs)
   }
   un <- unique(nms)
-  if (!parent %in% un) {
+  uin <- !un %in% parent
+  if (all(uin)) {
     warning("The parent argument you provided does not match any observations.")
     return(obs)
   }
-  fetus <- un[-which(un == parent)]
-  children <- fetus[grep(paste0(parent, "//.*"), fetus)]
+  fetus <- un[uin]
+  children <- fetus[grepl(paste0(parent, "//.*"), fetus)]
   if (length(children) == 0){
     warning(paste0("No children were found for the ", parent, " node."))
     return(obs)
@@ -273,6 +274,70 @@ add_key <- function(obs, parent, recycle, key.name, quiet=FALSE){
   }
   return(obs)
 }
+
+#' Transport observations 'from' one level 'to' another
+#' 
+#' This function maps observations from one level into another
+#' 
+#' @param obs list of observations.
+#' @param what a regular  matching observation names. 
+#' @param descendants character string taken as a regular expression used to match descendants of the specified parent.
+#' @return Returns a list of observations (list of matrices with one row).
+#' @export
+
+squish <- function(obs, parent, descendants, ...) {
+  if (missing(parent)) {
+    warning("Must provide a parent argument!")
+    return(obs)
+  }
+  nms <- names(obs)
+  if (is.null(nms)) {
+    warning("The observations don't not have any names!")
+    return(obs)
+  }
+  # Basic idea: map observations from 'descendants' into their respective 'parents'
+  into.idx <- which(nms %in% parent)
+  from.idx <- grep(paste0(parent, descendants), nms)
+  from.n <- length(from.idx)
+  into.n <- length(into.idx)
+  if (from.n == 0) warning("No observation names match the parent argument")
+  if (into.n == 0) warning("No observation names match the into argument")
+  # create a factor that tracks gaps in parent.idx and split along gaps
+  #fac <- cumsum(diff(c(0, from.idx)) - 1)
+  #from.list <- split(from.idx, fac)
+  #if (length(from.list) != into.n) warning("Unexpected case.")
+  
+  # each element of from.list contains the indices of observations to be mapped into parents
+  from.list <- vector("list", into.n)
+  j <- 0 # lower bound
+  for (i in seq_len(into.n)) {
+    k <- into.idx[[i]] # upper bound
+    from.list[[i]] <- from.idx[j < from.idx & from.idx < k]
+    j <- k
+  } 
+  # reduce "parent observations" that are "siblings" into a single observation
+  # I decided to replace "XML_value" with the observation name (otherwise we 
+  # wouldn't know where in the hierarchy it occurs).
+  reduced <- 
+    lapply(from.list, 
+            function(x) {
+              lapply(x, function(y) {
+                # keeping track of the url doesn't make sense here
+                oby <- obs[[y]]
+                oby <- oby[, !grepl("^url$", colnames(oby)), drop = FALSE]
+                # replace 'XML_value' with the observation name
+                obs[[y]] <<- `colnames<-`(oby, sub("XML_value", nms[y], colnames(oby)))
+              })
+              Reduce("cbind", obs[x])
+            })
+  
+  # append (the reduced) 'from' observations with 'to' observations
+  obs[into.idx] <- mapply(cbind, obs[into.idx], reduced, SIMPLIFY = FALSE)
+  obs[from.idx] <- NULL
+  # ensure column names are unique
+  lapply(obs, function(x) `colnames<-`(x, make.unique(colnames(x))))
+}
+
 
 #' Collapse a list of observations into a list of tables.
 #' 

@@ -1,0 +1,65 @@
+---
+title: "Squishing"
+author: "Carson Sievert"
+date: "September 24, 2014"
+output: html_document
+---
+
+I will take a more playful mini-approach here to learn some XML2R concepts and eventually apply those to the Gameday site (I hope Jeroen doesn't mind my adaptation his example from his lovely [jsonlite vignette](http://cran.r-project.org/web/packages/jsonlite/vignettes/json-mapping.pdf)).
+
+```r
+<mariokart>
+  <driver name="Bowser" occupation="Koopa">
+    <vehicle model="Wario Bike">
+      <stats>
+        <speed>40</speed>
+        <weight>60</weight>
+        <drift>25</drift>
+      </stats>
+    </vehicle>
+    <vehicle model="Piranha Prowler">
+      <stats>
+        <speed>55</speed>
+        <weight>67</weight>
+        <drift>35</drift>
+      </stats>
+    </vehicle>
+  </driver>
+  <driver name="Peach" occupation="Princess">
+    <vehicle model="Royal Racer">
+      <stats>
+        <speed>34</speed>
+        <weight>24</weight>
+        <drift>32</drift>
+      </stats>
+    </vehicle>
+  </driver>
+</mariokart>
+```
+
+How to include with highlighting? [Does this work](https://gist.github.com/kbroman/ca560b967b0b7a08a3b2)?
+
+Hidden in this listed structure is a [tidy version](http://vita.had.co.nz/papers/tidy-data.pdf) begging to be revealed. The first task in constructing tidy dataset(s) is to identify the observational unit(s). In this case, there are two possibilities: driver and vehicle. 
+
+```{r}
+library(XML2R)
+xmlfile <- "https://gist.githubusercontent.com/cpsievert/3a9a199ccddab114c5f4/raw/a13a3df93d0fe40f5a1004084749f27050bb6371/mariokart.xml"
+obs <- XML2Obs(xmlfile, url.map = FALSE)
+unique(names(obs))
+obs2 <- squish(obs, parent = "mariokart//driver//vehicle")
+obs3 <- add_key(obs2, parent = "mariokart//driver", recycle = "name")
+tabs <- collapse_obs(obs3)
+vehicle <- tabs[["mariokart//driver//vehicle"]]
+colnames(vehicle) <- sub("mariokart//driver//vehicle//stats//", "", colnames(vehicle))
+vehicle
+```
+
+Another test
+
+```{r event}
+fil <- "http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_01/gid_2014_08_01_phimlb_wasmlb_1/atv_game_events.xml"
+test <- XML2Obs(fil)
+unique(names(test))
+t <- squish(test, parent = "atv//body//eventGroup//event")
+```
+

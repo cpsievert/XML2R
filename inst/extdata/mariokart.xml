@@ -1,0 +1,27 @@
+<mariokart>
+  <driver name="Bowser" occupation="Koopa">
+    <vehicle model="Wario Bike">
+      <stats>
+        <speed>40</speed>
+        <weight>60</weight>
+        <drift>25</drift>
+      </stats>
+    </vehicle>
+    <vehicle model="Piranha Prowler">
+      <stats>
+        <speed>55</speed>
+        <weight>67</weight>
+        <drift>35</drift>
+      </stats>
+    </vehicle>
+  </driver>
+  <driver name="Peach" occupation="Princess">
+    <vehicle model="Royal Racer">
+      <stats>
+        <speed>34</speed>
+        <weight>24</weight>
+        <drift>32</drift>
+      </stats>
+    </vehicle>
+  </driver>
+</mariokart>
