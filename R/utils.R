@@ -16,8 +16,33 @@
 urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
   #keep only urls that exist
   if (!local) {
-    urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-    text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+    #urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
+    #text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+    
+    cl<-makeCluster(50, type="SOCK")
+    print("Downloading XML Files")
+    pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
+
+    #clusterExport(cl, "pb", envir = environment())
+    clusterEvalQ(cl, library(httr))
+    # text <- clusterApply(cl, urls, function(x) {
+    #   content <- content(GET(x), as = "text")
+    #   pbval <- getTxtProgressBar(pb)
+    #   setTxtProgressBar(pb, pbval+1)
+    #   #cat(sprintf("\r%s", x))
+    #   #print(x)
+    #   return(content)
+    #   })
+    
+    registerDoSNOW(cl)
+    
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress=progress)
+    text <- foreach(x=urls, .options.snow=opts) %dopar% {
+      content(GET(x), as = "text")
+    }
+    stopCluster(cl)
+    close(pb)
   } else {
     text <- urls
   }
@@ -26,6 +51,7 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
     return(text)
   }
   docs <- NULL
+  
   for (i in seq_along(text)) {
     if (!quiet) cat(urls[i], "\n")
     doc <- try_default(xmlParse(text[i], asText = !local), NULL, quiet = TRUE)
@@ -48,8 +74,7 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
 
 docsToNodes <- function(docs, xpath) {
   #I should really figure which class I want...
-  rapply(docs, function(x) getNodeSet(x, path=xpath), 
-         classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+  rapply(docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
 }
 
 

@@ -12,7 +12,9 @@ Depends:
 Imports:
     XML,
     httr,
-    plyr
+    plyr,
+    doSNOW,
+    foreach
 Date: 2014-03-09
 URL: http://cpsievert.github.com/XML2R
 BugReports: http://github.com/cpsievert/XML2R/issues
