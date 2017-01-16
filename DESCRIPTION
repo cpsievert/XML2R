@@ -13,6 +13,7 @@ Imports:
     XML,
     httr,
     plyr,
+    snow,
     doSNOW,
     foreach
 Date: 2014-03-09

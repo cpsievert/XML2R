@@ -51,15 +51,17 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
     return(text)
   }
   docs <- NULL
-  
+  print("Parsing XML Files")
+  if (!quiet) pb <- txtProgressBar(min = 0, max = length(text), style = 3)
   for (i in seq_along(text)) {
-    if (!quiet) cat(urls[i], "\n")
     doc <- try_default(xmlParse(text[i], asText = !local), NULL, quiet = TRUE)
     if (!is.null(doc)) {
       attr(doc, "XMLsource") <- urls[i]
       docs <- c(docs, doc) #Keep non-empty documents
     }
+    if (!quiet) setTxtProgressBar(pb, i)
   }
+  if (!quiet) close(pb)
   return(docs)
 }
 
@@ -75,6 +77,14 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
 docsToNodes <- function(docs, xpath) {
   #I should really figure which class I want...
   rapply(docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+  #cl<-makeCluster(4, type="SOCK")
+  #clusterEvalQ(cl, library(XML))
+  #registerDoSNOW(cl)
+  #foreach(doc=docs) %dopar% {
+  #  rapply(doc, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+  #}
+  #parLapply(cl, docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+  #stopCluster(cl)
 }
 
 
@@ -92,6 +102,12 @@ nodesToList <- function(nodes){
   #I should really figure which class I want...
   rapply(nodes, function(x) xmlToList(x),
     classes=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
+  #cl<-makeCluster(4, type="SOCK")
+  #clusterEvalQ(cl, library(XML))
+  #parRapply(cl, nodes, function(x) xmlToList(x),
+  #       classes=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
+  
+  #stopCluster(cl)
 }
 
 #' Flatten nested list into a list of observations
