@@ -12,7 +12,8 @@ Depends:
 Imports:
     XML,
     httr,
-    plyr,
+    plyr
+Suggets:
     snow,
     doSNOW,
     foreach

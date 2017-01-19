@@ -16,27 +16,32 @@
 urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
   #keep only urls that exist
   if (!local) {
-    #urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-    #text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
     
-    cl<-makeCluster(20, type="SOCK")
     print("Downloading XML Files")
-    pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
-
+    cl<-makeCluster(20, type="SOCK")
     clusterEvalQ(cl, library(httr))
     
-    registerDoSNOW(cl)
-    
-    progress <- function(n) setTxtProgressBar(pb, n)
-    opts <- list(progress=progress)
-    text <- foreach(x=urls, .options.snow=opts) %dopar% {
-      rawxml <- GET(x)
-      if (!identical(status_code(rawxml), 200L)) return(NA)
-      content(rawxml, as = "text")
+    if (requireNamespace("doSNOW", quietly = TRUE)) {
+      library(doSNOW)
+      registerDoSNOW(cl)
+      pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
+      progress <- function(n) setTxtProgressBar(pb, n)
+      opts <- list(progress=progress)
+      text <- foreach(x=urls, .options.snow=opts) %dopar% {
+        rawxml <- GET(x)
+        if (!identical(status_code(rawxml), 200L)) return(NA)
+        content(rawxml, as = "text")
+      }
+      close(pb)
+    } else {
+      text <- clusterApplyLB(cl, x = urls, function(x) {
+        rawxml <- GET(x)
+        if (!identical(status_code(rawxml), 200L)) return(NA)
+        content(rawxml, as = "text")})
     }
+    
     text <- text[!is.na(text)]
     stopCluster(cl)
-    close(pb)
   } else {
     text <- urls
   }
