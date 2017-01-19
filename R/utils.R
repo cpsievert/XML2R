@@ -13,35 +13,43 @@
 #' @importFrom httr content
 #' @export
             
-urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
+urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, numDownloads = 1, ...) {
   #keep only urls that exist
   if (!local) {
-    
     print("Downloading XML Files")
-    cl<-makeCluster(20, type="SOCK")
-    clusterEvalQ(cl, library(httr))
-    
-    if (requireNamespace("doSNOW", quietly = TRUE)) {
-      library(doSNOW)
-      registerDoSNOW(cl)
-      pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
-      progress <- function(n) setTxtProgressBar(pb, n)
-      opts <- list(progress=progress)
-      text <- foreach(x=urls, .options.snow=opts) %dopar% {
-        rawxml <- GET(x)
-        if (!identical(status_code(rawxml), 200L)) return(NA)
-        content(rawxml, as = "text")
+    if(numDownloads > 1) {
+      # use parallel downloads
+      cl<-makeCluster(numDownloads, type="SOCK")
+      clusterEvalQ(cl, library(httr))
+      
+      if (requireNamespace("doSNOW", quietly = TRUE)) {
+        library(doSNOW)
+        registerDoSNOW(cl)
+        pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress=progress)
+        text <- foreach(x=urls, .options.snow=opts) %dopar% {
+          rawxml <- GET(x)
+          if (!identical(status_code(rawxml), 200L)) return(NA)
+          content(rawxml, as = "text")
+        }
+        close(pb)
+      } else {
+        text <- clusterApplyLB(cl, x = urls, function(x) {
+          rawxml <- GET(x)
+          if (!identical(status_code(rawxml), 200L)) return(NA)
+          content(rawxml, as = "text")})
       }
-      close(pb)
+      
+      text <- text[!is.na(text)]
+      stopCluster(cl)
     } else {
-      text <- clusterApplyLB(cl, x = urls, function(x) {
-        rawxml <- GET(x)
-        if (!identical(status_code(rawxml), 200L)) return(NA)
-        content(rawxml, as = "text")})
+      # use serial downloads
+      urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
+      text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
     }
     
-    text <- text[!is.na(text)]
-    stopCluster(cl)
+    
   } else {
     text <- urls
   }

@@ -66,9 +66,9 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' }
 
 XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map = FALSE, 
-                    local = FALSE, quiet = FALSE, ...) {
+                    local = FALSE, quiet = FALSE, numDownloads = 1, ...) {
   if (missing(xpath)) xpath <- "/"  #select the root
-  docs <- urlsToDocs(urls, local, quiet, ...)
+  docs <- urlsToDocs(urls, local, quiet, numDownloads, ...)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) 
   rm(docs)
