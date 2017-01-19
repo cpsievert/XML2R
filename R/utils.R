@@ -19,20 +19,11 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
     #urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
     #text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
     
-    cl<-makeCluster(50, type="SOCK")
+    cl<-makeCluster(20, type="SOCK")
     print("Downloading XML Files")
     pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
 
-    #clusterExport(cl, "pb", envir = environment())
     clusterEvalQ(cl, library(httr))
-    # text <- clusterApply(cl, urls, function(x) {
-    #   content <- content(GET(x), as = "text")
-    #   pbval <- getTxtProgressBar(pb)
-    #   setTxtProgressBar(pb, pbval+1)
-    #   #cat(sprintf("\r%s", x))
-    #   #print(x)
-    #   return(content)
-    #   })
     
     registerDoSNOW(cl)
     
@@ -77,14 +68,6 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
 docsToNodes <- function(docs, xpath) {
   #I should really figure which class I want...
   rapply(docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
-  #cl<-makeCluster(4, type="SOCK")
-  #clusterEvalQ(cl, library(XML))
-  #registerDoSNOW(cl)
-  #foreach(doc=docs) %dopar% {
-  #  rapply(doc, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
-  #}
-  #parLapply(cl, docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
-  #stopCluster(cl)
 }
 
 
@@ -102,12 +85,6 @@ nodesToList <- function(nodes){
   #I should really figure which class I want...
   rapply(nodes, function(x) xmlToList(x),
     classes=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
-  #cl<-makeCluster(4, type="SOCK")
-  #clusterEvalQ(cl, library(XML))
-  #parRapply(cl, nodes, function(x) xmlToList(x),
-  #       classes=c("XMLInternalElementNode", "XMLInternalNode", "XMLAbstractNode"), how="replace")
-  
-  #stopCluster(cl)
 }
 
 #' Flatten nested list into a list of observations
