@@ -30,8 +30,11 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
     progress <- function(n) setTxtProgressBar(pb, n)
     opts <- list(progress=progress)
     text <- foreach(x=urls, .options.snow=opts) %dopar% {
-      content(GET(x), as = "text")
+      rawxml <- GET(x)
+      if (!identical(status_code(rawxml), 200L)) return(NA)
+      content(rawxml, as = "text")
     }
+    text <- text[!is.na(text)]
     stopCluster(cl)
     close(pb)
   } else {
