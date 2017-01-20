@@ -5,10 +5,10 @@
 #' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
 #' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
+#' @param numDownloads integer. Number of simultaneous downloads to use.
 #' @param ... arguments passed along to \link{httr::GET}
 #' @importFrom plyr try_default
 #' @importFrom XML xmlParse
-#' @importFrom httr url_ok
 #' @importFrom httr GET
 #' @importFrom httr content
 #' @export
