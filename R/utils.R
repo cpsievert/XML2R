@@ -17,6 +17,14 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, numDownloads = 1, ...
   #keep only urls that exist
   if (!local) {
     print("Downloading XML Files")
+    
+    downloadAndWarn <- function(x, ...) {
+      req <- GET(x, ...)
+      httr::warn_for_status(req)
+      if (!identical(httr::status_code(req), 200L)) return(NA)
+      content(req, as = "text")
+    }
+    
     if(numDownloads > 1) {
       # use parallel downloads
       cl<-makeCluster(numDownloads, type="SOCK", outfile = "")
@@ -28,32 +36,18 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, numDownloads = 1, ...
         progress <- function(n) setTxtProgressBar(pb, n)
         opts <- list(progress=progress)
         text <- foreach::`%dopar%`(
-          foreach::foreach(x=urls, .options.snow=opts), {
-          req <- GET(x)
-          httr::warn_for_status(req)
-          if (!identical(status_code(req), 200L)) return(NA)
-          content(req, as = "text")
-        })
+          foreach::foreach(x=urls, .options.snow=opts), downloadAndWarn(x, ...))
         close(pb)
       } else {
-        text <- clusterApplyLB(cl, x = urls, function(x) {
-          req <- GET(x)
-          httr::warn_for_status(req)
-          if (!identical(status_code(req), 200L)) return(NA)
-          content(req, as = "text")})
+        text <- clusterApplyLB(cl, x = urls, downloadAndWarn(x, ...))
       }
-      text <- text[!is.na(text)]
       stopCluster(cl)
     } else {
       # use serial downloads
-      urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-      text <- lapply(urls, function(x) {
-        req <- GET(x, ...)
-        httr::warn_for_status(req)
-        content(req, as = "text")
-        })
+      text <- lapply(urls, function(x) downloadAndWarn(x, ...))
     }
     
+    text <- text[!is.na(text)]
     
   } else {
     text <- urls
