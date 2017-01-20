@@ -23,16 +23,16 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, numDownloads = 1, ...
       clusterEvalQ(cl, library(httr))
       
       if (requireNamespace("doSNOW", quietly = TRUE)) {
-        library(doSNOW)
-        registerDoSNOW(cl)
+        doSNOW::registerDoSNOW(cl)
         pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
         progress <- function(n) setTxtProgressBar(pb, n)
         opts <- list(progress=progress)
-        text <- foreach(x=urls, .options.snow=opts) %dopar% {
+        text <- foreach::`%dopar%`(
+          foreach::foreach(x=urls, .options.snow=opts), {
           rawxml <- GET(x)
           if (!identical(status_code(rawxml), 200L)) return(NA)
           content(rawxml, as = "text")
-        }
+        })
         close(pb)
       } else {
         text <- clusterApplyLB(cl, x = urls, function(x) {
