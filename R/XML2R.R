@@ -47,6 +47,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' as a 'url' column and no "url_map" is included.
 #' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
+#' @param numDownloads integer. Number of simultaneous downloads to use.
 #' @param ... arguments passed along to \link{httr::GET}
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
 #' @return A list of "observations" and (possibly) the "url_map" element. 
@@ -66,9 +67,9 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' }
 
 XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map = FALSE, 
-                    local = FALSE, quiet = FALSE, ...) {
+                    local = FALSE, quiet = FALSE, numDownloads = 1, ...) {
   if (missing(xpath)) xpath <- "/"  #select the root
-  docs <- urlsToDocs(urls, local, quiet, ...)
+  docs <- urlsToDocs(urls, local, quiet, numDownloads, ...)
   valid.urls <- sapply(docs, function(x) attr(x, "XMLsource"))
   nodes <- docsToNodes(docs, xpath) 
   rm(docs)
@@ -78,7 +79,6 @@ XML2Obs <- function(urls, xpath, append.value = TRUE, as.equiv = TRUE, url.map =
   gc()
   obs <- listsToObs(l, urls = valid.urls, append.value = append.value, 
                     as.equiv = as.equiv, url.map = url.map)
-  # throw out url column if there is only one
-  if (length(urls) == 1) obs <- lapply(obs, function(x) x[, !grepl("^url$", colnames(x)), drop = FALSE])
+
   obs
 }
