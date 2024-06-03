@@ -1,3 +1,7 @@
+# XML2R 0.0.8
+
+Updated maintainer email and various links.
+
 # XML2R 0.0.7
 
 ## MAJOR FIX

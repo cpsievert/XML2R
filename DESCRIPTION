@@ -1,9 +1,9 @@
 Package: XML2R
-Title: EasieR XML data collection
-Version: 0.0.7
+Title: Easier XML Data Collection
+Version: 0.0.8
 Author: Carson Sievert <cpsievert1@gmail.com>
 Maintainer: Carson Sievert <cpsievert1@gmail.com>
-Description: XML2R is a framework that reduces the effort required to transform
+Description: Helpers for transforming
     XML content into number of tables while preserving parent to child
     relationships.
 License: GPL (>=2)
