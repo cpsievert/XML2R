@@ -5,19 +5,50 @@
 #' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
 #' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
+#' @param numDownloads integer. Number of simultaneous downloads to use.
 #' @param ... arguments passed along to \link{httr::GET}
 #' @importFrom plyr try_default
 #' @importFrom XML xmlParse
-#' @importFrom httr url_ok
 #' @importFrom httr GET
 #' @importFrom httr content
 #' @export
             
-urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
+urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, numDownloads = 1, ...) {
   #keep only urls that exist
   if (!local) {
-    urls <- urls[vapply(urls, url_ok, logical(1), USE.NAMES=FALSE)]
-    text <- lapply(urls, function(x) content(GET(x, ...), as = "text"))
+    print("Downloading XML Files")
+    
+    downloadAndWarn <- function(x, ...) {
+      req <- GET(x, ...)
+      httr::warn_for_status(req)
+      if (!identical(httr::status_code(req), 200L)) return(NA)
+      content(req, as = "text")
+    }
+    
+    if(numDownloads > 1) {
+      # use parallel downloads
+      cl<-makeCluster(numDownloads, type="SOCK", outfile = "")
+      clusterEvalQ(cl, library(httr))
+      
+      if (requireNamespace("doSNOW", quietly = TRUE)) {
+        doSNOW::registerDoSNOW(cl)
+        pb <- txtProgressBar(min = 0, max = length(urls), style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress=progress)
+        text <- foreach::`%dopar%`(
+          foreach::foreach(x=urls, .options.snow=opts), downloadAndWarn(x, ...))
+        close(pb)
+      } else {
+        text <- clusterApplyLB(cl, x = urls, downloadAndWarn(x, ...))
+      }
+      stopCluster(cl)
+    } else {
+      # use serial downloads
+      text <- lapply(urls, function(x) downloadAndWarn(x, ...))
+    }
+    
+    text <- text[!is.na(text)]
+    
   } else {
     text <- urls
   }
@@ -26,14 +57,17 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
     return(text)
   }
   docs <- NULL
+  print("Parsing XML Files")
+  if (!quiet) pb <- txtProgressBar(min = 0, max = length(text), style = 3)
   for (i in seq_along(text)) {
-    if (!quiet) cat(urls[i], "\n")
     doc <- try_default(xmlParse(text[i], asText = !local), NULL, quiet = TRUE)
     if (!is.null(doc)) {
       attr(doc, "XMLsource") <- urls[i]
       docs <- c(docs, doc) #Keep non-empty documents
     }
+    if (!quiet) setTxtProgressBar(pb, i)
   }
+  if (!quiet) close(pb)
   return(docs)
 }
 
@@ -48,8 +82,7 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
 
 docsToNodes <- function(docs, xpath) {
   #I should really figure which class I want...
-  rapply(docs, function(x) getNodeSet(x, path=xpath), 
-         classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
+  rapply(docs, function(x) getNodeSet(x, path=xpath), classes=c('XMLInternalDocument', 'XMLAbstractDocument'), how="replace")
 }
 
 

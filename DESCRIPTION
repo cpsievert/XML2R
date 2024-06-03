@@ -13,6 +13,10 @@ Imports:
     XML,
     httr,
     plyr
+Suggets:
+    snow,
+    doSNOW,
+    foreach
 Date: 2014-03-09
 URL: https://github.com/cpsievert/XML2R
 BugReports: https://github.com/cpsievert/XML2R/issues
