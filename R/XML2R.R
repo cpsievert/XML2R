@@ -47,7 +47,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' as a 'url' column and no "url_map" is included.
 #' @param local logical. Should urls be treated as paths to local files?
 #' @param quiet logical. Print file name currently being parsed?
-#' @param ... arguments passed along to \link{httr::GET}
+#' @param ... arguments passed along to `httr::GET`
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
 #' @return A list of "observations" and (possibly) the "url_map" element. 
 #' @export
