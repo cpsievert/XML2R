@@ -40,9 +40,9 @@ MINOR FIXES
 
 NEW FEATURES
 
-  - First version of XML2R. See the package [tutorial](http://cpsievert.github.io/XML2R/)
+  - First version of XML2R. See the package [tutorial](https://XML2R.cpsievert.me/)
 
-  - This package was born out of an effort to abstract the functionality of [pitchRx::urlsToDataFrame](https://github.com/cpsievert/pitchRx/blob/master/R/urlsToDataFrame.R) so that other projects can be built on top of this framework.
+  - This package was born out of an effort to abstract the functionality of `pitchRx::urlsToDataFrame` so that other projects can be built on top of this framework.
 
 MISC
 
