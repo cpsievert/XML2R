@@ -25,7 +25,7 @@ A list of "observations".
 }
 \description{
 Sometimes, certain nodes in an XML ancestory may want to be neglected
-before any keys are created (see \link{add_key}) or observations are aggregated (see \link{collapse}).
+before any keys are created (see \link{add_key}) or observations are aggregated .
 This function takes a list of "observations" (that is, a list of matrices with one row) and 
 alters the names of that list. Note that any information lost from changing names is saved 
 in a new column whose name is specified by \code{diff.name}.

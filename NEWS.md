@@ -1,3 +1,7 @@
+# XML2R 0.0.9
+
+Addressed new R CMD check NOTE.
+
 # XML2R 0.0.8
 
 Updated maintainer email and various links.

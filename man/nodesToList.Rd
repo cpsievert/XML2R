@@ -13,5 +13,5 @@ nodesToList(nodes)
 A nested list with a structure that resembles the XML structure
 }
 \description{
-Essentially a recursive call to \link{xmlToList}.
+Essentially a recursive call to [XML::xmlToList()].
 }

@@ -16,5 +16,5 @@ urlsToDocs(urls, local = FALSE, quiet = FALSE, ...)
 \item{...}{arguments passed along to `httr::GET`}
 }
 \description{
-Essentially a recursive call to \link{xmlParse}.
+Essentially a recursive call to [XML::xmlParse()].
 }

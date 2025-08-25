@@ -12,5 +12,5 @@ docsToNodes(docs, xpath)
 \item{xpath}{xpath expression}
 }
 \description{
-Essentially a recursive call to \link{getNodeSet}.
+Essentially a recursive call to [XML::getNodeSet()].
 }

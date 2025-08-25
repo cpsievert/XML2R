@@ -18,7 +18,7 @@ XML2Obs(
 \arguments{
 \item{urls}{character vector. Either urls that point to an XML file online or a local XML file name.}
 
-\item{xpath}{XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/").}
+\item{xpath}{XML XPath expression that is passed to [XML::getNodeSet()]. If missing, the entire root and all descendents are captured and returned (ie, tables = "/").}
 
 \item{append.value}{logical. Should the XML value be appended for relevant observations?}
 

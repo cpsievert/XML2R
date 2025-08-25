@@ -1,6 +1,6 @@
 #' Parse XML Files into XML Documents
 #' 
-#' Essentially a recursive call to \link{xmlParse}.
+#' Essentially a recursive call to [XML::xmlParse()].
 #' 
 #' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
 #' @param local logical. Should urls be treated as paths to local files?
@@ -39,7 +39,7 @@ urlsToDocs <- function(urls, local = FALSE, quiet = FALSE, ...) {
 
 #' Parse XML Documents into XML Nodes
 #' 
-#' Essentially a recursive call to \link{getNodeSet}.
+#' Essentially a recursive call to [XML::getNodeSet()].
 #' 
 #' @param docs XML documents
 #' @param xpath xpath expression
@@ -55,7 +55,7 @@ docsToNodes <- function(docs, xpath) {
 
 #' Coerce XML Nodes into a list with both attributes and values
 #' 
-#' Essentially a recursive call to \link{xmlToList}.
+#' Essentially a recursive call to [XML::xmlToList()].
 #' 
 #' @param nodes A collection of XML nodes. Should be the output from \link{docsToNodes}.
 #' @importFrom XML xmlToList
@@ -152,7 +152,7 @@ listsToObs <- function(l, urls, append.value=TRUE, as.equiv=TRUE, url.map=TRUE) 
 #' Rename rows of a list
 #' 
 #' Sometimes, certain nodes in an XML ancestory may want to be neglected
-#' before any keys are created (see \link{add_key}) or observations are aggregated (see \link{collapse}).
+#' before any keys are created (see \link{add_key}) or observations are aggregated .
 #' This function takes a list of "observations" (that is, a list of matrices with one row) and 
 #' alters the names of that list. Note that any information lost from changing names is saved 
 #' in a new column whose name is specified by \code{diff.name}.

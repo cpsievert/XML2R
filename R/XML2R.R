@@ -1,10 +1,10 @@
 #' Parse XML files into (a list of) matrices or data frame(s)
 #' 
-#' This function is an experimental wrapper around \link{XML2Obs}. One should only use this function over \link{XML2Obs} if 
+#' This function is a wrapper around \link{XML2Obs}. One should only use this function over \link{XML2Obs} if 
 #' keys already exist in the XML data and ancestory doesn't need to be altered.
 #' 
-#' @param urls character vector or list of urls that point to an XML file (or anything readable by \link{xmlParse}).
-#' @param xpath XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
+#' @param urls character vector or list of urls that point to an XML file (or anything readable by [XML::xmlParse()]).
+#' @param xpath XML XPath expression that is passed to [XML::getNodeSet()]. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
 #' @param df logical. Should matrices be coerced into data frames?
 #' @return Returns list with one element for each relevant XML node. Each element contains a matrix by default.
 #' @seealso \link{urlsToDocs}, \link{docsToNodes}, \link{nodesToList}, \link{listsToObs}
@@ -39,7 +39,7 @@ XML2R <- function(urls, xpath, df=FALSE) {
 #' in case the actual file named want to be used.
 #' 
 #' @param urls character vector. Either urls that point to an XML file online or a local XML file name.
-#' @param xpath XML XPath expression that is passed to \link{getNodeSet}. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
+#' @param xpath XML XPath expression that is passed to [XML::getNodeSet()]. If missing, the entire root and all descendents are captured and returned (ie, tables = "/"). 
 #' @param append.value logical. Should the XML value be appended for relevant observations?
 #' @param as.equiv logical. Should observations from two different files (but the same ancestory) have the same name returned?
 #' @param url.map logical. If TRUE, the 'url_key' column will contain a condensed url identifier (for each observation)
